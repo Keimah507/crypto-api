@@ -80,10 +80,10 @@ router.get('/crypto/trendinglist', async(req, res) => {
             trendinglist
         })
     })
-})
+});
 
-router.get('/crypto/recents', (req, res) => {
-    fetch('https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?limit=5&convert=KES&sort=date_added', {
+router.get('/crypto/recents', async(req, res) => {
+    await fetch('https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?limit=5&convert=KES&sort=date_added', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -91,17 +91,30 @@ router.get('/crypto/recents', (req, res) => {
         }
     })
     .then(response => response.json())
-    .then(data => {
+    .then(async(data) => {
         const recents = [];
         for (let i = 0; i < data.data.length; i++){
             const item = data.data[i];
             const { name, symbol } = item;
-            const { price } = item.quote.KES; 
-            recents.push({
-                'name': name,
-                'symbol': symbol,
-                'price': price,
-            });
+            const { price, percent_change_24h } = item.quote.KES;
+            await fetch(`https://pro-api.coinmarketcap.com/v2/cryptocurrency/info?symbol=${symbol}`, {
+                method: 'GET',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CMC_PRO_API_KEY': process.env.CMC_API_KEY,
+                }
+            })
+            .then(response2 => response2.json())
+            .then(data2 => {
+                let logoUrl = data2.data[symbol][0].logo;
+                recents.push({
+                    'name': name,
+                    'symbol': symbol,
+                    'price': price,
+                    'percent_change_24h': percent_change_24h,
+                    'logo': logoUrl
+                })
+            }) 
         }
         res.json({
             recents
@@ -109,8 +122,8 @@ router.get('/crypto/recents', (req, res) => {
     })
 });
 
-router.get('/crypto/gainers', (req, res) => {
-    fetch('https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?limit=5&convert=KES&sort=percent_change_24h', {
+router.get('/crypto/gainers', async(req, res) => {
+    await fetch('https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?limit=5&convert=KES&sort=percent_change_24h', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -118,25 +131,37 @@ router.get('/crypto/gainers', (req, res) => {
         }
     })
         .then((response) => response.json())
-        .then((data ) => {
+        .then(async(data ) => {
             const gainers = [];
             for (let i = 0; i < data.data.length; i++){
                 const item = data.data[i];
                 const { name, symbol } = item;
-                const { price, percent_change_24h } = item.quote.KES; 
-                gainers.push({
-                    'name': name,
-                    'symbol': symbol,
-                    'price': price,
-                    'percent_change_24h': percent_change_24h,
-                });
+                const { price, percent_change_24h } = item.quote.KES;
+                await fetch(`https://pro-api.coinmarketcap.com/v2/cryptocurrency/info?symbol=${symbol}`, {
+                    method: 'GET',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CMC_PRO_API_KEY': process.env.CMC_API_KEY,
+                    }
+                })
+                .then(response2 => response2.json())
+                .then(data2 => {
+                    let logoUrl = data2.data[symbol][0].logo;
+                    gainers.push({
+                        'name': name,
+                        'symbol': symbol,
+                        'price': price,
+                        'percent_change_24h': percent_change_24h,
+                        'logo': logoUrl
+                    })
+                })
             }
             res.json({gainers})
         })
     });
 
-    router.get('/crypto/market-cap', (req, res) => {
-        fetch('https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?limit=5&convert=KES&sort=market_cap', {
+    router.get('/crypto/market-cap', async(req, res) => {
+        await fetch('https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?limit=5&convert=KES&sort=market_cap', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
@@ -144,18 +169,30 @@ router.get('/crypto/gainers', (req, res) => {
             }
         })
             .then((response) => response.json())
-            .then((data) => {
+            .then(async(data) => {
                 const marketcap = [];
                 for (let i = 0; i < data.data.length; i++){
                     const item = data.data[i];
                     const { name, symbol } = item;
                     const { price, percent_change_24h } = item.quote.KES;
-                    marketcap.push({
-                        'name': name,
-                        'symbol': symbol,
-                        'price': price,
-                        'percent_change_24h': percent_change_24h,  
-                    });
+                    await fetch(`https://pro-api.coinmarketcap.com/v2/cryptocurrency/info?symbol=${symbol}`, {
+                        method: 'GET',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CMC_PRO_API_KEY': process.env.CMC_API_KEY,
+                        }
+                    })
+                    .then(response2 => response2.json())
+                    .then(data2 => {
+                        let logoUrl = data2.data[symbol][0].logo;
+                        marketcap.push({
+                            'name': name,
+                            'symbol': symbol,
+                            'price': price,
+                            'percent_change_24h': percent_change_24h,
+                            'logo': logoUrl
+                        })
+                    })
                 }
                 res.json({marketcap})
             })
