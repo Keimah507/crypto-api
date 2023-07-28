@@ -1,8 +1,10 @@
 const express = require('express');
 const app = require('../server.js');
-require('dotenv').config()
+require('dotenv').config();
+
 
 const router = express.Router();
+
 
 router.get('/', (req, res) => {
     res.send('Hello World!');
@@ -43,6 +45,7 @@ router.get('/crypto/dropdownprices', (req, res) => {
 });
 
 router.get('/crypto/trendinglist', async(req, res) => {
+    const trendinglist = [];
     await fetch('https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?convert=KES&limit=5', {
         method: 'GET',
         headers: {
@@ -52,12 +55,11 @@ router.get('/crypto/trendinglist', async(req, res) => {
     })
     .then(response => response.json())
     .then(async(data) => {
-        const trendinglist = [];
         for (let i = 0; i < data.data.length; i++){
             const item = data.data[i];
-            const { name, symbol } = item;
+            const { id, name, symbol } = item;
             const {price, percent_change_24h} = item.quote.KES;
-            await fetch(`https://pro-api.coinmarketcap.com/v2/cryptocurrency/info?symbol=${symbol}`, {
+            await fetch(`https://pro-api.coinmarketcap.com/v2/cryptocurrency/info?id=${id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -66,7 +68,7 @@ router.get('/crypto/trendinglist', async(req, res) => {
             })
             .then(response2 => response2.json())
             .then(data2 => {
-                let logoUrl = data2.data[symbol][0].logo;
+                let logoUrl = data2.data[id].logo;
                 trendinglist.push({
                     'name': name,
                     'symbol': symbol,
@@ -95,9 +97,9 @@ router.get('/crypto/recents', async(req, res) => {
         const recents = [];
         for (let i = 0; i < data.data.length; i++){
             const item = data.data[i];
-            const { name, symbol } = item;
+            const { id, name, symbol } = item;
             const { price, percent_change_24h } = item.quote.KES;
-            await fetch(`https://pro-api.coinmarketcap.com/v2/cryptocurrency/info?symbol=${symbol}`, {
+            await fetch(`https://pro-api.coinmarketcap.com/v2/cryptocurrency/info?id=${id}`, {
                 method: 'GET',
                 headers: {
                     'Content-Type': 'application/json',
@@ -106,7 +108,7 @@ router.get('/crypto/recents', async(req, res) => {
             })
             .then(response2 => response2.json())
             .then(data2 => {
-                let logoUrl = data2.data[symbol][0].logo;
+                let logoUrl = data2.data[id].logo;
                 recents.push({
                     'name': name,
                     'symbol': symbol,
@@ -114,11 +116,17 @@ router.get('/crypto/recents', async(req, res) => {
                     'percent_change_24h': percent_change_24h,
                     'logo': logoUrl
                 })
+            })
+            .catch(err => {
+                console.error(err);
             }) 
         }
         res.json({
             recents
         })
+    })
+    .catch(err => {
+        console.error(err)
     })
 });
 
@@ -135,9 +143,9 @@ router.get('/crypto/gainers', async(req, res) => {
             const gainers = [];
             for (let i = 0; i < data.data.length; i++){
                 const item = data.data[i];
-                const { name, symbol } = item;
+                const { id, name, symbol } = item;
                 const { price, percent_change_24h } = item.quote.KES;
-                await fetch(`https://pro-api.coinmarketcap.com/v2/cryptocurrency/info?symbol=${symbol}`, {
+                await fetch(`https://pro-api.coinmarketcap.com/v2/cryptocurrency/info?id=${id}`, {
                     method: 'GET',
                     headers: {
                         'Content-Type': 'application/json',
@@ -146,7 +154,7 @@ router.get('/crypto/gainers', async(req, res) => {
                 })
                 .then(response2 => response2.json())
                 .then(data2 => {
-                    let logoUrl = data2.data[symbol][0].logo;
+                    let logoUrl = data2.data[id].logo;
                     gainers.push({
                         'name': name,
                         'symbol': symbol,
@@ -173,9 +181,9 @@ router.get('/crypto/gainers', async(req, res) => {
                 const marketcap = [];
                 for (let i = 0; i < data.data.length; i++){
                     const item = data.data[i];
-                    const { name, symbol } = item;
+                    const { id, name, symbol } = item;
                     const { price, percent_change_24h } = item.quote.KES;
-                    await fetch(`https://pro-api.coinmarketcap.com/v2/cryptocurrency/info?symbol=${symbol}`, {
+                    await fetch(`https://pro-api.coinmarketcap.com/v2/cryptocurrency/info?id=${id}`, {
                         method: 'GET',
                         headers: {
                             'Content-Type': 'application/json',
@@ -184,7 +192,7 @@ router.get('/crypto/gainers', async(req, res) => {
                     })
                     .then(response2 => response2.json())
                     .then(data2 => {
-                        let logoUrl = data2.data[symbol][0].logo;
+                        let logoUrl = data2.data[id].logo;
                         marketcap.push({
                             'name': name,
                             'symbol': symbol,
@@ -192,7 +200,7 @@ router.get('/crypto/gainers', async(req, res) => {
                             'percent_change_24h': percent_change_24h,
                             'logo': logoUrl
                         })
-                    })
+                    })  
                 }
                 res.json({marketcap})
             })
