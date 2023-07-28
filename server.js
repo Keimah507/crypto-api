@@ -5,13 +5,7 @@ const connDB = require('./utils/redis.js');
 
 const app = express();
 
-app.use(function (req, res, next) {
-    res.setHeader('Access-Control-Allow-Origin', '*');
-    res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-    res.setHeader('Access-Control-Allow-Headers', 'X-Requested-With', 'Content-Type');
-
-    next();
-})
+app.use(cors());
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use(router);
