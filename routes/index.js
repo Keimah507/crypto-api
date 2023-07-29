@@ -49,7 +49,7 @@ router.get('/crypto/trendinglist', async(req, res) => {
     const trendinglist = [];
     const cachedData = await redisClient.get('trendinglist');
     if (cachedData){
-        res.json(JSON.parse(cachedData))
+        res.json({trendinglist: JSON.parse(cachedData)});
     } else {
         await fetch('https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?convert=KES&limit=5', {
             method: 'GET',
@@ -101,7 +101,7 @@ router.get('/crypto/recents', async(req, res) => {
     const recents = [];
     const cachedData = await redisClient.get('recents');
     if (cachedData) {
-        res.json(JSON.parse(cachedData));
+        res.json({recents: JSON.parse(cachedData)});
     } else {
         await fetch('https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?limit=5&convert=KES&sort=date_added', {
             method: 'GET',
@@ -153,7 +153,7 @@ router.get('/crypto/gainers', async(req, res) => {
     const gainers = [];
     const cachedData = await redisClient.get('gainers');
     if (cachedData) {
-        res.json(JSON.parse(cachedData));
+        res.json({gainers: JSON.parse(cachedData)});
     } else {
         await fetch('https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?limit=5&convert=KES&sort=percent_change_24h', {
             method: 'GET',
@@ -203,7 +203,7 @@ router.get('/crypto/gainers', async(req, res) => {
         const marketcap = [];
         const cachedData = await redisClient.get('marketcap');
         if (cachedData) {
-            res.json(JSON.parse(cachedData));
+            res.json({marketcap: JSON.parse(cachedData)});
         } else {
             await fetch('https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?limit=5&convert=KES&sort=market_cap', {
                 method: 'GET',
