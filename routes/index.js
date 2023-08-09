@@ -11,8 +11,8 @@ router.get('/', (req, res) => {
     res.send('Hello World!');
 });
 
-router.get('/cryptos', (req, res) => {
-    fetch('https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?convert=KES', {
+router.get('/cryptos', async(req, res) => {
+    await fetch('https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?convert=KES', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
@@ -26,8 +26,8 @@ router.get('/cryptos', (req, res) => {
 })
 
 
-router.get('/crypto/dropdownprices', (req, res) => {
-    fetch('https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?symbol=BTC,ETH&convert=KES', {
+router.get('/crypto/dropdownprices', async(req, res) => {
+    await fetch('https://pro-api.coinmarketcap.com/v2/cryptocurrency/quotes/latest?symbol=BTC,ETH&convert=KES', {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json',
