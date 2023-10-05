@@ -155,7 +155,7 @@ router.get('/crypto/gainers', async(req, res) => {
     if (cachedData) {
         res.json({gainers: JSON.parse(cachedData)});
     } else {
-        await fetch('https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?limit=5&convert=KES&sort=percent_change_24h', {
+        await fetch('https://pro-api.coinmarketcap.com/v1/cryptocurrency/listings/latest?limit=5&convert=KES&sort=percent_change_24h&market_cap_min=7000000000', {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
