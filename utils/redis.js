@@ -7,7 +7,7 @@ class RedisClient {
             password: 'Keimah001',
             socket: {
                 host: 'redis-10259.c15.us-east-1-2.ec2.cloud.redislabs.com:10259',
-                port: 10638
+                port: 10259
             },
             legacyMode: true,
         });
