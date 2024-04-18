@@ -6,7 +6,7 @@ class RedisClient {
         this.client = createClient({
             password: 'Keimah001',
             socket: {
-                host: 'redis-10259.c15.us-east-1-2.ec2.cloud.redislabs.com:10259',
+                host: 'redis-10259.c15.us-east-1-2.ec2.cloud.redislabs.com',
                 port: 10259
             },
             legacyMode: true,
